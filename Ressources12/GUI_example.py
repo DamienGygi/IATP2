@@ -2,7 +2,6 @@ import pygame
 from pygame.locals import KEYDOWN, QUIT, MOUSEBUTTONDOWN, K_RETURN, K_ESCAPE
 import sys
 
-
 """
 1) Input -> GUI ou fichier data
 2) Algo genetic -> Squellette : codage - selction - Terminaison
@@ -13,7 +12,7 @@ screen_x = 500
 screen_y = 500
 
 city_color = [10,10,200] # blue
-city_radius = 3
+city_radius = 7
 
 font_color = [255,255,255] # white
 
@@ -25,6 +24,7 @@ font = pygame.font.Font(None,30)
 
 def draw(positions):
 		screen.fill(0)
+		#Trier la liste de position
 		for pos in positions: 
 			pygame.draw.circle(screen,city_color,pos,city_radius)
 		text = font.render("Nombre: %i" % len(positions), True, font_color)
@@ -33,6 +33,7 @@ def draw(positions):
 		pygame.display.flip()
 
 cities = []
+
 draw(cities)
 
 collecting = True
