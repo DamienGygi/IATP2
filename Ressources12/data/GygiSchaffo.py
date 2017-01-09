@@ -1,14 +1,28 @@
 import random
 import pygame
 from pygame.locals import KEYDOWN, QUIT, MOUSEBUTTONDOWN, K_RETURN, K_ESCAPE
+import operator
 import sys
 import math
 
+"""
+    MAJ:
+    la premiere ville doit toujours etre la meme
+"""
 class City:
     def __init__(self,name,x,y):
         self.name=name
         self.x=x
         self.y=y
+
+    def __str__(self):
+        return '%s' % (self.name)
+
+    def __repr__(self):
+        return self.name
+
+    def __hash__(self):
+        return str(self).__hash__()
 
 class Individu:
     def __init__(self, cities):
@@ -23,9 +37,11 @@ class Individu:
                 city1 = self.travelPath[0]
             else:
                 city1 = self.travelPath[i+1]
-            distance+=math.sqrt((city1.x-city.x)**2+(city1.y-city.y)**2)
+            distance+=int(math.sqrt((int(city1.x)-int(city.x))**2+(int(city1.y)-int(city.y))**2))
         return distance
 
+    def __str__(self):
+        return '%s' % (self.distance)
 
 cities = []
 individues = []
@@ -36,11 +52,23 @@ def ga_solve(file=None, gui=True, maxTime=0):
         if file is not None:
             readFile(file)
         initPoints(file, cities)
-    else:
-        if file is None:
-            print("ERROR: Enter a file name please.")
-        else:
-            print("")
+    # else:
+    #     if file is None:
+    #         print("ERROR: Enter a file name please.")
+    #     else:
+    #         print("")
+
+
+    POPULATION_SIZE = 100
+
+    for i in range(0, POPULATION_SIZE):
+        newIndividus = Individu(random.sample(cities,len(cities)))
+        if newIndividus.distance not in individues:
+            individues.append(newIndividus)
+    for i in range(0, len(individues)):
+        print(individues[i])
+
+
 
 def readFile(file):
     with open(file,"r") as f:
@@ -49,6 +77,25 @@ def readFile(file):
             newCity=City(city_pos[0],city_pos[1],city_pos[2])
             cities.append(newCity)
     f.close()
+
+def croisement(indiv1, indiv2):
+    newParcours = []
+    for i in range(0, 4):
+        newParcours.append(indiv1.travelPath[i])
+
+    for cityIndiv2 in indiv2.orderVisit:
+        if cityIndiv2 not in newParcours:
+            newParcours.append(cityIndiv2)
+
+    return Individu(newParcours)
+
+def mutation(individu):
+    v1 = len(individu.orderVisit) - 2
+    v2 = v1 + 1;
+    tmp = individu.travelPath[v2]
+    individu.orderVisit[v2] = individu.travelPath[v1]
+    individu.orderVisit[v1] = tmp
+    return individu
 
 def initPoints(file, cities):
 
@@ -77,7 +124,7 @@ def initPoints(file, cities):
 
     if file is not None:
         collecting=False
-        random.shuffle(cities)
+        # random.shuffle(cities)
         draw(cities)
     else:
         cities=[]
@@ -94,10 +141,6 @@ def initPoints(file, cities):
                 #random.shuffle(cities)
                 draw(cities)
 
-    POPULATION_SIZE = 10
-    for i in range(0, POPULATION_SIZE):
-        newIndividus= Individu(random.sample(cities,len(cities)))
-        individues.append(newIndividus)
 
     screen.fill(0)
     for i in range(0,len(cities)):
