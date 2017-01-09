@@ -2,6 +2,12 @@ import pygame
 from pygame.locals import KEYDOWN, QUIT, MOUSEBUTTONDOWN, K_RETURN, K_ESCAPE
 import sys
 
+class City:
+    def __init__(self,name,x,y):
+        self.name=name
+        self.x=x
+        self.y=y
+
 cities = []
 
 def ga_solve(file=None, gui=True, maxTime=0):
@@ -20,7 +26,8 @@ def readFile(file):
     with open(file,"r") as f:
         for lines in f:
             city_pos= lines.split()
-            cities.append((int(city_pos[1]),int(city_pos[2])))
+            newCity=City(city_pos[0],city_pos[1],city_pos[2])
+            cities.append(newCity)
     f.close()
 
 def initPoints(file, cities):
@@ -38,11 +45,12 @@ def initPoints(file, cities):
     screen = pygame.display.get_surface()
     font = pygame.font.Font(None, 30)
 
-    def draw(positions):
+    def draw(cityList):
         screen.fill(0)
-        for pos in positions:
-            pygame.draw.circle(screen, CITY_COLOR, pos, CITY_RADIUS)
-        text = font.render("Nombre: %i" % len(positions), True, FONT_COLOR)
+        for city in cityList:
+            cityPos=(int(city.x),int(city.y))
+            pygame.draw.circle(screen, CITY_COLOR, cityPos, CITY_RADIUS)
+        text = font.render("Nombre: %i" % len(cityList), True, FONT_COLOR)
         textRect = text.get_rect()
         screen.blit(text, textRect)
         pygame.display.flip()
@@ -66,7 +74,16 @@ def initPoints(file, cities):
                 draw(cities)
 
     screen.fill(0)
-    pygame.draw.lines(screen, CITY_COLOR, True, cities)
+    for i in range(0,len(cities)):
+        cityPos = (int(cities[i].x), int(cities[i].y))
+        if(i==len(cities)-1):
+            cityPos1 = (int(cities[0].x), int(cities[0].y))
+        else:
+            cityPos1 = (int(cities[i+1].x), int(cities[i+1].y))
+        cityLine=(cityPos,cityPos1)
+
+        pygame.draw.lines(screen, CITY_COLOR, True,cityLine)
+
     text = font.render("Chemin trouvé: ", True, FONT_COLOR)
     textRect = text.get_rect()
     screen.blit(text, textRect)
@@ -78,4 +95,4 @@ def initPoints(file, cities):
 
 
 if __name__ == '__main__':
-    ga_solve(None, True, 20)
+    ga_solve("pb005.txt", True, 20)
