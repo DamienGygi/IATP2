@@ -1,3 +1,4 @@
+import random
 import pygame
 from pygame.locals import KEYDOWN, QUIT, MOUSEBUTTONDOWN, K_RETURN, K_ESCAPE
 import sys
@@ -49,7 +50,7 @@ def initPoints(file, cities):
 
     if file is not None:
         collecting=False
-
+        random.shuffle(cities)
         draw(cities)
     else:
         cities=[]
@@ -63,6 +64,7 @@ def initPoints(file, cities):
             elif event.type == MOUSEBUTTONDOWN:
                 print(pygame.mouse.get_pos())
                 cities.append(pygame.mouse.get_pos())
+                random.shuffle(cities)
                 draw(cities)
 
     screen.fill(0)
@@ -78,4 +80,5 @@ def initPoints(file, cities):
 
 
 if __name__ == '__main__':
-    ga_solve(None, True, 20)
+    ga_solve("pb005.txt", True, 20)
+    #ga_solve(None, True, 20)
