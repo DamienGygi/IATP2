@@ -2,6 +2,7 @@ import random
 import pygame
 from pygame.locals import KEYDOWN, QUIT, MOUSEBUTTONDOWN, K_RETURN, K_ESCAPE
 import sys
+import math
 
 class City:
     def __init__(self,name,x,y):
@@ -9,7 +10,25 @@ class City:
         self.x=x
         self.y=y
 
+class Individu:
+    def __init__(self, cities):
+        self.travelPath=cities
+        self.distance= self.totalDistance()
+
+    def totalDistance(self):
+        distance=0
+        for i in range(0, len(self.travelPath)):
+            city = self.travelPath[i]
+            if (i == len(cities) - 1):
+                city1 = self.travelPath[0]
+            else:
+                city1 = self.travelPath[i+1]
+            distance+=math.sqrt((city1.x-city.x)**2+(city1.y-city.y)**2)
+        return distance
+
+
 cities = []
+individues = []
 
 def ga_solve(file=None, gui=True, maxTime=0):
 
@@ -72,8 +91,13 @@ def initPoints(file, cities):
             elif event.type == MOUSEBUTTONDOWN:
                 print(pygame.mouse.get_pos())
                 cities.append(pygame.mouse.get_pos())
-                random.shuffle(cities)
+                #random.shuffle(cities)
                 draw(cities)
+
+    POPULATION_SIZE = 10
+    for i in range(0, POPULATION_SIZE):
+        newIndividus= Individu(random.sample(cities,len(cities)))
+        individues.append(newIndividus)
 
     screen.fill(0)
     for i in range(0,len(cities)):
@@ -98,4 +122,5 @@ def initPoints(file, cities):
 
 if __name__ == '__main__':
     ga_solve("pb005.txt", True, 20)
+
 
