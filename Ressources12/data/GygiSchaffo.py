@@ -5,10 +5,6 @@ import operator
 import sys
 import math
 
-"""
-    MAJ:
-    la premiere ville doit toujours etre la meme
-"""
 class City:
     def __init__(self,name,x,y):
         self.name=name
@@ -25,12 +21,14 @@ class City:
         return str(self).__hash__()
 
 class Individu:
-    def __init__(self, cities):
+    def __init__(self, cities,startCity):
         self.travelPath=cities
+        self.startPathCity=startCity
+        self.strTravelPath = "[" + '%s' % (self.startPathCity)
         self.distance= self.totalDistance()
 
     def totalDistance(self):
-        distance=0
+        distance=int(math.sqrt((int(self.travelPath[0].x)-int(self.startPathCity.x))**2+(int(self.travelPath[0].y)-int(self.startPathCity.y))**2))
         for i in range(0, len(self.travelPath)):
             city = self.travelPath[i]
             if (i == len(cities) - 1):
@@ -41,7 +39,10 @@ class Individu:
         return distance
 
     def __str__(self):
-        return '%s' % (self.distance)
+        for i in range(len(self.travelPath)):
+            self.strTravelPath+=", "+'%s'%(self.travelPath[i])
+        self.strTravelPath+="]"
+        return "The total distance calculated using travel path is: " + '%s' % (self.distance) + " " +self.strTravelPath
 
 cities = []
 individues = []
@@ -59,12 +60,13 @@ def ga_solve(file=None, gui=True, maxTime=0):
     #         print("")
 
 
-    POPULATION_SIZE = 100
-
+    POPULATION_SIZE = 10
+    citiesToVisit=cities
+    startCity= citiesToVisit.pop(0)
     for i in range(0, POPULATION_SIZE):
-        newIndividus = Individu(random.sample(cities,len(cities)))
-        if newIndividus.distance not in individues:
-            individues.append(newIndividus)
+        newIndividus = Individu(random.sample(citiesToVisit,len(cities)),startCity)
+        individues.append(newIndividus)
+
     for i in range(0, len(individues)):
         print(individues[i])
 
@@ -124,7 +126,6 @@ def initPoints(file, cities):
 
     if file is not None:
         collecting=False
-        # random.shuffle(cities)
         draw(cities)
     else:
         cities=[]
@@ -138,7 +139,6 @@ def initPoints(file, cities):
             elif event.type == MOUSEBUTTONDOWN:
                 print(pygame.mouse.get_pos())
                 cities.append(pygame.mouse.get_pos())
-                #random.shuffle(cities)
                 draw(cities)
 
 
@@ -153,7 +153,7 @@ def initPoints(file, cities):
 
         pygame.draw.lines(screen, CITY_COLOR, True,cityLine)
 
-    text = font.render("Chemin trouvé: ", True, FONT_COLOR)
+    text = font.render("A good travelling path was found: ", True, FONT_COLOR)
     textRect = text.get_rect()
     screen.blit(text, textRect)
     pygame.display.flip()
