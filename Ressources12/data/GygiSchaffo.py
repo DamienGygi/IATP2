@@ -5,6 +5,7 @@ import operator
 import sys
 import math
 from copy import deepcopy
+import time
 
 SCREEN_X = 500
 SCREEN_Y = 500
@@ -76,8 +77,10 @@ def ga_solve(file=None, gui=True, maxTime=0):
     individues.sort(key=lambda x: x.distance, reverse=False)
     for i in range(0, len(individues)):
         print(individues[i])
-    print(individues[0].travelPath)
-    print(cities)
+        screen.fill(0)
+        time.sleep(0.1)
+        drawLine(individues[i].travelPath)
+
     #while True:
         #draw(cities)
         #drawLine(individues[0].travelPath)
@@ -132,6 +135,7 @@ def drawLine(cityList):
             cityPos1 = (int(cityList[i + 1].x), int(cityList[i + 1].y))
         cityLine = (cityPos, cityPos1)
         pygame.draw.lines(screen, CITY_COLOR, True, cityLine)
+        pygame.display.flip()
 
 def initPoints(file, cities):
     if file is not None:
