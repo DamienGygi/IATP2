@@ -4,6 +4,7 @@ from pygame.locals import KEYDOWN, QUIT, MOUSEBUTTONDOWN, K_RETURN, K_ESCAPE
 import operator
 import sys
 import math
+from copy import deepcopy
 
 SCREEN_X = 500
 SCREEN_Y = 500
@@ -37,18 +38,17 @@ class Individu:
     def __init__(self, cities,startCity):
         self.travelPath=cities
         self.startCity=startCity
-        self.distance= self.totalDistance()
+        self.distance= 0
 
     def totalDistance(self):
-        distance=int(math.sqrt((int(self.travelPath[0].x)-int(self.startCity.x))**2+(int(self.travelPath[0].y)-int(self.startCity.y))**2))
         for i in range(0, len(self.travelPath)):
             city = self.travelPath[i]
             if (i == len(cities) - 1):
-                city1 = self.startCity
+                city1 = self.travelPath[0]
             else:
-                city1 = self.travelPath[i+1]
-            distance+=int(math.sqrt((int(city1.x)-int(city.x))**2+(int(city1.y)-int(city.y))**2))
-        return distance
+                city1 = self.travelPath[i + 1]
+            self.distance += int(math.sqrt((int(city1.x) - int(city.x)) ** 2 + (int(city1.y) - int(city.y)) ** 2))
+
 
     def __str__(self):
         return "The total distance calculated using travel path is: " + '%s' % (self.distance) + " " + '%s' % (self.travelPath)
@@ -64,11 +64,12 @@ def ga_solve(file=None, gui=True, maxTime=0):
         initPoints(file, cities)
 
     POPULATION_SIZE = 10
-    citiesToVisit=cities
+    citiesToVisit=deepcopy(cities)
     startCity= citiesToVisit.pop(0)
     for i in range(0, POPULATION_SIZE):
-        newIndividus = Individu(random.sample(citiesToVisit,len(cities)),startCity)
+        newIndividus = Individu(random.sample(citiesToVisit,len(citiesToVisit)),startCity)
         newIndividus.travelPath.insert(0,startCity)
+        newIndividus.totalDistance();
         #Choisir seulement ceux qui ont des trajets différents
         individues.append(newIndividus)
 
