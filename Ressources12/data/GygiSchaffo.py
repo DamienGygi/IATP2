@@ -5,6 +5,19 @@ import operator
 import sys
 import math
 
+SCREEN_X = 500
+SCREEN_Y = 500
+CITY_COLOR = [10, 10, 200]
+CITY_RADIUS = 7
+FONT_COLOR = [255, 255, 255]
+collecting = True
+
+pygame.init()
+window = pygame.display.set_mode((SCREEN_X, SCREEN_Y))
+pygame.display.set_caption('GygSchaffo Perfekt Algorithm')
+screen = pygame.display.get_surface()
+font = pygame.font.Font(None, 30)
+
 class City:
     def __init__(self,name,x,y):
         self.name=name
@@ -23,26 +36,22 @@ class City:
 class Individu:
     def __init__(self, cities,startCity):
         self.travelPath=cities
-        self.startPathCity=startCity
-        self.strTravelPath = "[" + '%s' % (self.startPathCity)
+        self.startCity=startCity
         self.distance= self.totalDistance()
 
     def totalDistance(self):
-        distance=int(math.sqrt((int(self.travelPath[0].x)-int(self.startPathCity.x))**2+(int(self.travelPath[0].y)-int(self.startPathCity.y))**2))
+        distance=int(math.sqrt((int(self.travelPath[0].x)-int(self.startCity.x))**2+(int(self.travelPath[0].y)-int(self.startCity.y))**2))
         for i in range(0, len(self.travelPath)):
             city = self.travelPath[i]
             if (i == len(cities) - 1):
-                city1 = self.travelPath[0]
+                city1 = self.startCity
             else:
                 city1 = self.travelPath[i+1]
             distance+=int(math.sqrt((int(city1.x)-int(city.x))**2+(int(city1.y)-int(city.y))**2))
         return distance
 
     def __str__(self):
-        for i in range(len(self.travelPath)):
-            self.strTravelPath+=", "+'%s'%(self.travelPath[i])
-        self.strTravelPath+="]"
-        return "The total distance calculated using travel path is: " + '%s' % (self.distance) + " " +self.strTravelPath
+        return "The total distance calculated using travel path is: " + '%s' % (self.distance) + " " + '%s' % (self.travelPath)
 
 cities = []
 individues = []
@@ -53,22 +62,25 @@ def ga_solve(file=None, gui=True, maxTime=0):
         if file is not None:
             readFile(file)
         initPoints(file, cities)
-    # else:
-    #     if file is None:
-    #         print("ERROR: Enter a file name please.")
-    #     else:
-    #         print("")
-
 
     POPULATION_SIZE = 10
     citiesToVisit=cities
     startCity= citiesToVisit.pop(0)
     for i in range(0, POPULATION_SIZE):
         newIndividus = Individu(random.sample(citiesToVisit,len(cities)),startCity)
+        newIndividus.travelPath.insert(0,startCity)
+        #Choisir seulement ceux qui ont des trajets différents
         individues.append(newIndividus)
 
+    individues.sort(key=lambda x: x.distance, reverse=False)
     for i in range(0, len(individues)):
         print(individues[i])
+    print(individues[0].travelPath)
+    print(cities)
+    #while True:
+        #draw(cities)
+        #drawLine(individues[0].travelPath)
+        #pygame.display.flip()
 
 
 
@@ -99,41 +111,38 @@ def mutation(individu):
     individu.orderVisit[v1] = tmp
     return individu
 
+
+def draw(cityList):
+    screen.fill(0)
+    for city in cityList:
+        cityPos = (int(city.x), int(city.y))
+        pygame.draw.circle(screen, CITY_COLOR, cityPos, CITY_RADIUS)
+    text = font.render("Nombre: %i" % len(cityList), True, FONT_COLOR)
+    textRect = text.get_rect()
+    screen.blit(text, textRect)
+    pygame.display.flip()
+
+def drawLine(cityList):
+    for i in range(0, len(cities)):
+        cityPos = (int(cityList[i].x), int(cityList[i].y))
+        if (i == len(cityList) - 1):
+            cityPos1 = (int(cityList[0].x), int(cityList[0].y))
+        else:
+            cityPos1 = (int(cityList[i + 1].x), int(cityList[i + 1].y))
+        cityLine = (cityPos, cityPos1)
+        pygame.draw.lines(screen, CITY_COLOR, True, cityLine)
+
 def initPoints(file, cities):
-
-    SCREEN_X = 500
-    SCREEN_Y = 500
-    CITY_COLOR = [10, 10, 200]
-    CITY_RADIUS = 7
-    FONT_COLOR = [255, 255, 255]
-    collecting = True
-
-    pygame.init()
-    window = pygame.display.set_mode((SCREEN_X, SCREEN_Y))
-    pygame.display.set_caption('GygSchaffo Perfekt Algorithm')
-    screen = pygame.display.get_surface()
-    font = pygame.font.Font(None, 30)
-
-    def draw(cityList):
-        screen.fill(0)
-        for city in cityList:
-            cityPos=(int(city.x),int(city.y))
-            pygame.draw.circle(screen, CITY_COLOR, cityPos, CITY_RADIUS)
-        text = font.render("Nombre: %i" % len(cityList), True, FONT_COLOR)
-        textRect = text.get_rect()
-        screen.blit(text, textRect)
-        pygame.display.flip()
-
     if file is not None:
-        collecting=False
+        collecting = False
         draw(cities)
     else:
-        cities=[]
+        cities = []
 
     while collecting:
         for event in pygame.event.get():
             if event.type == QUIT:
-                sys.exit(0)
+                a=10
             elif event.type == KEYDOWN and event.key == K_RETURN:
                 collecting = False
             elif event.type == MOUSEBUTTONDOWN:
@@ -141,17 +150,8 @@ def initPoints(file, cities):
                 cities.append(pygame.mouse.get_pos())
                 draw(cities)
 
-
     screen.fill(0)
-    for i in range(0,len(cities)):
-        cityPos = (int(cities[i].x), int(cities[i].y))
-        if(i==len(cities)-1):
-            cityPos1 = (int(cities[0].x), int(cities[0].y))
-        else:
-            cityPos1 = (int(cities[i+1].x), int(cities[i+1].y))
-        cityLine=(cityPos,cityPos1)
-
-        pygame.draw.lines(screen, CITY_COLOR, True,cityLine)
+    drawLine(cities)
 
     text = font.render("A good travelling path was found: ", True, FONT_COLOR)
     textRect = text.get_rect()
