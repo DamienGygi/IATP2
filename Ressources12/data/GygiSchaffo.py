@@ -72,31 +72,27 @@ def ga_solve(file=None, gui=True, maxTime=0):
         individuExist(newIndividu)
 
     individues.sort(key=lambda x: x.distance, reverse=False)
+    numberOfIndividues=len(individues)
 
     startTime = time.time()
 
-
     while time.time()<startTime+maxTime:
-        print("test")
         screen.fill(0)
         selection()
-        time.sleep(0.1)
+        # time.sleep(0.1)
+        individues.sort(key=lambda x: x.distance, reverse=False)
+        while(len(individues)>numberOfIndividues):
+            individues.pop()
         drawLine(individues[0].travelPath)
         timer=time.time()
-
-    # for i in range(0, len(individues)):
-    #     print(individues[i])
-    #     screen.fill(0)
-    #     time.sleep(0.1)
-    #     drawLine(individues[i].travelPath)
 
 def selection():
     sampleSize=int(len(individues)*0.1)
     selectedIndividues=[]
     for i in range(0,sampleSize):
-        print(sampleSize)
         selectedIndividues.append(individues[i])
-        selectedIndividues.append(individues[random.randint(sampleSize, POPULATION_SIZE)])
+        selectedIndividues.append(individues[random.randint(sampleSize, len(individues)-1)])
+
     for i in range(0,sampleSize):
         croisement(selectedIndividues[i],selectedIndividues[len(selectedIndividues)-i-1],len(selectedIndividues[0].travelPath))
 
@@ -138,12 +134,14 @@ def croisement(indiv1, indiv2, numberOfCity):
     swapSize= int(numberOfCity*0.2)
     newCityTravelpath=[]
     newCityStartCity=indiv1.travelPath[0]
-    for i in range(1,swapSize):
+
+    for i in range(0,swapSize):
         newCityTravelpath.append(indiv1.travelPath[i])
 
     for cityIndiv2 in indiv2.travelPath:
         if cityIndiv2 not in newCityTravelpath:
             newCityTravelpath.append(cityIndiv2)
+    newCityTravelpath.pop(0)
     newIndividu = Individu(newCityTravelpath, newCityStartCity)
     newIndividu.travelPath.insert(0, newCityStartCity)
     newIndividu.totalDistance();
@@ -193,6 +191,6 @@ def individuExist(indiv):
 
 
 if __name__ == '__main__':
-    ga_solve("pb010.txt", True, 20)
+    ga_solve("pb010.txt", True, 60)
 
 
