@@ -87,7 +87,7 @@ def ga_solve(file=None, gui=True, maxTime=0):
         timer=time.time()
 
 def selection():
-    sampleSize=int(len(individues)*0.1)
+    sampleSize=int(len(individues)*0.2)
     selectedIndividues=[]
     for i in range(0,sampleSize):
         selectedIndividues.append(individues[i])
@@ -131,7 +131,7 @@ def initPoints(file):
         if event.type == KEYDOWN: break
 
 def croisement(indiv1, indiv2, numberOfCity):
-    swapSize= int(numberOfCity*0.2)
+    swapSize= int(numberOfCity*0.3)
     newCityTravelpath=[]
     newCityStartCity=indiv1.travelPath[0]
 
@@ -191,6 +191,6 @@ def individuExist(indiv):
 
 
 if __name__ == '__main__':
-    ga_solve("pb010.txt", True, 60)
+    ga_solve("pb020.txt", True, 60)
 
 
