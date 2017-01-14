@@ -21,6 +21,7 @@ font = pygame.font.Font(None, 30)
 
 cities = []
 individues = []
+POPULATION_SIZE = 100
 
 class City:
     def __init__(self,name,x,y):
@@ -62,34 +63,42 @@ def ga_solve(file=None, gui=True, maxTime=0):
             readFile(file)
         initPoints(file)
 
-    POPULATION_SIZE = 10
     citiesToVisit=deepcopy(cities)
     startCity= citiesToVisit.pop(0)
     for i in range(0, POPULATION_SIZE):
         newIndividu = Individu(random.sample(citiesToVisit,len(citiesToVisit)),startCity)
         newIndividu.travelPath.insert(0,startCity)
         newIndividu.totalDistance();
-        pathExist=False
-        for individu in individues:
-            if(individu.travelPath == newIndividu.travelPath):
-                pathExist=True
-        if(pathExist is not True):
-            individues.append(newIndividu)
-
+        individuExist(newIndividu)
 
     individues.sort(key=lambda x: x.distance, reverse=False)
-    for i in range(0, len(individues)):
-        print(individues[i])
+
+    startTime = time.time()
+
+
+    while time.time()<startTime+maxTime:
+        print("test")
         screen.fill(0)
+        selection()
         time.sleep(0.1)
-        drawLine(individues[i].travelPath)
+        drawLine(individues[0].travelPath)
+        timer=time.time()
 
-    #while True:
-        #draw(cities)
-        #drawLine(individues[0].travelPath)
-        #pygame.display.flip()
+    # for i in range(0, len(individues)):
+    #     print(individues[i])
+    #     screen.fill(0)
+    #     time.sleep(0.1)
+    #     drawLine(individues[i].travelPath)
 
-
+def selection():
+    sampleSize=int(len(individues)*0.1)
+    selectedIndividues=[]
+    for i in range(0,sampleSize):
+        print(sampleSize)
+        selectedIndividues.append(individues[i])
+        selectedIndividues.append(individues[random.randint(sampleSize, POPULATION_SIZE)])
+    for i in range(0,sampleSize):
+        croisement(selectedIndividues[i],selectedIndividues[len(selectedIndividues)-i-1],len(selectedIndividues[0].travelPath))
 
 def readFile(file):
     with open(file,"r") as f:
@@ -117,12 +126,7 @@ def initPoints(file):
                 newCity = City("v"+str(len(cities)), pygame.mouse.get_pos()[0], pygame.mouse.get_pos()[1])
                 cities.append(newCity)
                 draw(cities)
-
     screen.fill(0)
-    text = font.render("A good travelling path was found: ", True, FONT_COLOR)
-    textRect = text.get_rect()
-    screen.blit(text, textRect)
-    pygame.display.flip()
     drawLine(cities)
 
 
@@ -130,16 +134,20 @@ def initPoints(file):
         event = pygame.event.wait()
         if event.type == KEYDOWN: break
 
-def croisement(indiv1, indiv2):
-    newParcours = []
-    for i in range(0, 4):
-        newParcours.append(indiv1.travelPath[i])
+def croisement(indiv1, indiv2, numberOfCity):
+    swapSize= int(numberOfCity*0.2)
+    newCityTravelpath=[]
+    newCityStartCity=indiv1.travelPath[0]
+    for i in range(1,swapSize):
+        newCityTravelpath.append(indiv1.travelPath[i])
 
-    for cityIndiv2 in indiv2.orderVisit:
-        if cityIndiv2 not in newParcours:
-            newParcours.append(cityIndiv2)
-
-    return Individu(newParcours)
+    for cityIndiv2 in indiv2.travelPath:
+        if cityIndiv2 not in newCityTravelpath:
+            newCityTravelpath.append(cityIndiv2)
+    newIndividu = Individu(newCityTravelpath, newCityStartCity)
+    newIndividu.travelPath.insert(0, newCityStartCity)
+    newIndividu.totalDistance();
+    individuExist(newIndividu)
 
 def mutation(individu):
     v1 = len(individu.orderVisit) - 2
@@ -161,6 +169,10 @@ def draw(cityList):
     pygame.display.flip()
 
 def drawLine(cityList):
+    text = font.render("Searching a good traveling path: ", True, FONT_COLOR)
+    textRect = text.get_rect()
+    screen.blit(text, textRect)
+    pygame.display.flip()
     for i in range(0, len(cities)):
         cityPos = (int(cityList[i].x), int(cityList[i].y))
         if (i == len(cityList) - 1):
@@ -171,9 +183,16 @@ def drawLine(cityList):
         pygame.draw.lines(screen, CITY_COLOR, True, cityLine)
         pygame.display.flip()
 
+def individuExist(indiv):
+    pathExist = False
+    for individu in individues:
+        if (individu.travelPath == indiv.travelPath):
+            pathExist = True
+    if (pathExist is not True):
+        individues.append(indiv)
 
 
 if __name__ == '__main__':
-    ga_solve(None, True, 20)
+    ga_solve("pb010.txt", True, 20)
 
 
