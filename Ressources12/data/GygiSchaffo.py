@@ -12,13 +12,15 @@ SCREEN_Y = 500
 CITY_COLOR = [10, 10, 200]
 CITY_RADIUS = 7
 FONT_COLOR = [255, 255, 255]
-collecting = True
 
 pygame.init()
 window = pygame.display.set_mode((SCREEN_X, SCREEN_Y))
 pygame.display.set_caption('GygSchaffo Perfekt Algorithm')
 screen = pygame.display.get_surface()
 font = pygame.font.Font(None, 30)
+
+cities = []
+individues = []
 
 class City:
     def __init__(self,name,x,y):
@@ -49,13 +51,11 @@ class Individu:
             else:
                 city1 = self.travelPath[i + 1]
             self.distance += int(math.sqrt((int(city1.x) - int(city.x)) ** 2 + (int(city1.y) - int(city.y)) ** 2))
-
-
+            
     def __str__(self):
         return "The total distance calculated using travel path is: " + '%s' % (self.distance) + " " + '%s' % (self.travelPath)
 
-cities = []
-individues = []
+
 
 def ga_solve(file=None, gui=True, maxTime=0):
 
@@ -68,11 +68,16 @@ def ga_solve(file=None, gui=True, maxTime=0):
     citiesToVisit=deepcopy(cities)
     startCity= citiesToVisit.pop(0)
     for i in range(0, POPULATION_SIZE):
-        newIndividus = Individu(random.sample(citiesToVisit,len(citiesToVisit)),startCity)
-        newIndividus.travelPath.insert(0,startCity)
-        newIndividus.totalDistance();
-        #Choisir seulement ceux qui ont des trajets différents
-        individues.append(newIndividus)
+        newIndividu = Individu(random.sample(citiesToVisit,len(citiesToVisit)),startCity)
+        newIndividu.travelPath.insert(0,startCity)
+        newIndividu.totalDistance();
+        pathExist=False
+        for individu in individues:
+            if(individu.travelPath == newIndividu.travelPath):
+                pathExist=True
+        if(pathExist is not True):
+            individues.append(newIndividu)
+
 
     individues.sort(key=lambda x: x.distance, reverse=False)
     for i in range(0, len(individues)):
@@ -138,6 +143,7 @@ def drawLine(cityList):
         pygame.display.flip()
 
 def initPoints(file, cities):
+    collecting = True
     if file is not None:
         collecting = False
         draw(cities)
@@ -151,12 +157,11 @@ def initPoints(file, cities):
             elif event.type == KEYDOWN and event.key == K_RETURN:
                 collecting = False
             elif event.type == MOUSEBUTTONDOWN:
-                print(pygame.mouse.get_pos())
-                cities.append(pygame.mouse.get_pos())
+                newCity = City("v"+str(len(cities)), pygame.mouse.get_pos()[0], pygame.mouse.get_pos()[1])
+                cities.append(newCity)
                 draw(cities)
 
-    screen.fill(0)
-    drawLine(cities)
+                print(cities)
 
     text = font.render("A good travelling path was found: ", True, FONT_COLOR)
     textRect = text.get_rect()
@@ -167,8 +172,7 @@ def initPoints(file, cities):
         event = pygame.event.wait()
         if event.type == KEYDOWN: break
 
-
 if __name__ == '__main__':
-    ga_solve("pb005.txt", True, 20)
+    ga_solve(None, True, 20)
 
 
