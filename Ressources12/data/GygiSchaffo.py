@@ -55,14 +55,12 @@ class Individu:
     def __str__(self):
         return "The total distance calculated using travel path is: " + '%s' % (self.distance) + " " + '%s' % (self.travelPath)
 
-
-
 def ga_solve(file=None, gui=True, maxTime=0):
 
     if gui is True:
         if file is not None:
             readFile(file)
-        initPoints(file, cities)
+        initPoints(file)
 
     POPULATION_SIZE = 10
     citiesToVisit=deepcopy(cities)
@@ -100,6 +98,37 @@ def readFile(file):
             newCity=City(city_pos[0],city_pos[1],city_pos[2])
             cities.append(newCity)
     f.close()
+
+def initPoints(file):
+    collecting = True
+    if file is not None:
+        collecting = False
+        draw(cities)
+    else:
+        cities.clear()
+
+    while collecting:
+        for event in pygame.event.get():
+            if event.type == QUIT:
+                a=10
+            elif event.type == KEYDOWN and event.key == K_RETURN:
+                collecting = False
+            elif event.type == MOUSEBUTTONDOWN:
+                newCity = City("v"+str(len(cities)), pygame.mouse.get_pos()[0], pygame.mouse.get_pos()[1])
+                cities.append(newCity)
+                draw(cities)
+
+    screen.fill(0)
+    text = font.render("A good travelling path was found: ", True, FONT_COLOR)
+    textRect = text.get_rect()
+    screen.blit(text, textRect)
+    pygame.display.flip()
+    drawLine(cities)
+
+
+    while True:
+        event = pygame.event.wait()
+        if event.type == KEYDOWN: break
 
 def croisement(indiv1, indiv2):
     newParcours = []
@@ -142,35 +171,7 @@ def drawLine(cityList):
         pygame.draw.lines(screen, CITY_COLOR, True, cityLine)
         pygame.display.flip()
 
-def initPoints(file, cities):
-    collecting = True
-    if file is not None:
-        collecting = False
-        draw(cities)
-    else:
-        cities = []
 
-    while collecting:
-        for event in pygame.event.get():
-            if event.type == QUIT:
-                a=10
-            elif event.type == KEYDOWN and event.key == K_RETURN:
-                collecting = False
-            elif event.type == MOUSEBUTTONDOWN:
-                newCity = City("v"+str(len(cities)), pygame.mouse.get_pos()[0], pygame.mouse.get_pos()[1])
-                cities.append(newCity)
-                draw(cities)
-
-                print(cities)
-
-    text = font.render("A good travelling path was found: ", True, FONT_COLOR)
-    textRect = text.get_rect()
-    screen.blit(text, textRect)
-    pygame.display.flip()
-
-    while True:
-        event = pygame.event.wait()
-        if event.type == KEYDOWN: break
 
 if __name__ == '__main__':
     ga_solve(None, True, 20)
