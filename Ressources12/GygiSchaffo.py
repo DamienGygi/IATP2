@@ -97,7 +97,7 @@ def ga_solve(file=None, gui=True, maxTime=0):
             readFile(file)
         initPoints(file)
 
-    citiesToVisit=deepcopy(cities)
+    citiesToVisit=cities[:]
     startCity= citiesToVisit.pop(0)
     for i in range(0, POPULATION_SIZE):
         newIndividu = Individu(random.sample(citiesToVisit,len(citiesToVisit)))
@@ -120,11 +120,6 @@ def ga_solve(file=None, gui=True, maxTime=0):
         drawLine(individues[0].travelPath)
 
     while True:
-        screen.fill(0)
-        text = font.render(str(individues[0]), True, FONT_COLOR)
-        textRect = text.get_rect()
-        screen.blit(text, textRect)
-        pygame.display.flip()
         event = pygame.event.wait()
         if event.type == KEYDOWN: break
 
