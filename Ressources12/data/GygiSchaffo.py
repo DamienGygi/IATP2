@@ -79,12 +79,11 @@ def ga_solve(file=None, gui=True, maxTime=0):
     while time.time()<startTime+maxTime:
         screen.fill(0)
         selection()
-        # time.sleep(0.1)
+        mutation()
         individues.sort(key=lambda x: x.distance, reverse=False)
         while(len(individues)>numberOfIndividues):
             individues.pop()
         drawLine(individues[0].travelPath)
-        timer=time.time()
 
 def selection():
     sampleSize=int(len(individues)*0.2)
@@ -147,14 +146,18 @@ def croisement(indiv1, indiv2, numberOfCity):
     newIndividu.totalDistance();
     individuExist(newIndividu)
 
-def mutation(individu):
-    v1 = len(individu.orderVisit) - 2
-    v2 = v1 + 1;
-    tmp = individu.travelPath[v2]
-    individu.orderVisit[v2] = individu.travelPath[v1]
-    individu.orderVisit[v1] = tmp
-    return individu
-
+def mutation():
+    for i in range(0,4):
+        if (random.random() < 0.1):
+            index = random.randint(0, len(individues) - 1)
+            indiv = individues[index]
+            listOrder = []
+            listOrder.extend(indiv.travelPath)
+            first = listOrder.pop(2)
+            last = listOrder.pop(3)
+            listOrder.insert(2, last)
+            listOrder.insert(3, first)
+            indiv.travelPath = listOrder
 
 def draw(cityList):
     screen.fill(0)
@@ -192,5 +195,6 @@ def individuExist(indiv):
 
 if __name__ == '__main__':
     ga_solve("pb020.txt", True, 60)
+
 
 
