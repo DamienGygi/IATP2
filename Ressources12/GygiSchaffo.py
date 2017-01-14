@@ -118,6 +118,7 @@ def ga_solve(file=None, gui=True, maxTime=0):
     numberOfIndividues=len(individues)
 
     startTime = time.time()
+    eliteIndividu()
 
     '''Muting of the population to find a optimal solution'''
     while time.time()<startTime+maxTime:
@@ -160,7 +161,7 @@ def selection():
     of individu 1 and add the rest of the path of individu 2
 '''
 def croisement(indiv1, indiv2, numberOfCity):
-    swapSize= int(numberOfCity*0.2)
+    swapSize= int(numberOfCity*0.1)
     newCityTravelpath=[]
     newCityStartCity=indiv1.travelPath[0]
     for i in range(0,swapSize):
@@ -182,7 +183,7 @@ def mutation():
         indiv =deepcopy(individues[index])
         listOrder = []
         listOrder.extend(indiv.travelPath)
-        for l in range(0,10):
+        for l in range(0,4):
             res = lambda i: (i[l], i[l+1])
             res(listOrder)
             indiv.travelPath = listOrder
@@ -227,10 +228,27 @@ def drawLine(cityList):
         pygame.draw.lines(screen, CITY_COLOR, True, cityLine)
         pygame.display.flip()
 
-'''Main point of the app '''
+'''eliteIndividu Function: search an elite individu'''
+def eliteIndividu():
+    for i in range(0,len(individues[0].travelPath)):
+        distance=0
+        swapIndex1=0;
+        swapIndex2=0;
+        for j in range(i,len(individues[0].travelPath)-1):
+            if distance==0:
+                distance=int(math.sqrt((int(individues[0].travelPath[i].x) - int(individues[0].travelPath[j].x)) ** 2 + (int(individues[0].travelPath[i].y) - int(individues[0].travelPath[j].y)) ** 2))
+            else:
+               if(int(math.sqrt((int(individues[0].travelPath[i].x) - int(individues[0].travelPath[j].x)) ** 2 + (int(individues[0].travelPath[i].y) - int(individues[0].travelPath[j].y)) ** 2))<distance):
+                    swapIndex1=i
+                    swapIndex2=j
+                    distance = int(math.sqrt((int(individues[0].travelPath[i].x) - int(individues[0].travelPath[j].x)) ** 2 + (int(individues[0].travelPath[i].y) - int(individues[0].travelPath[j].y)) ** 2))
 
+        individues[0].travelPath[swapIndex1+1],individues[0].travelPath[swapIndex2]=individues[0].travelPath[swapIndex2],individues[0].travelPath[swapIndex1+1]
+
+
+'''Main point of the app '''
 if __name__ == '__main__':
-    ga_solve("pb050.txt", True, 60)
+    ga_solve("pb050.txt", True, 10)
 
 
 
