@@ -50,7 +50,7 @@ class Individu:
                 city1 = self.travelPath[0]
             else:
                 city1 = self.travelPath[i + 1]
-            self.distance += int(math.sqrt((int(city1.x) - int(city.x)) ** 2 + (int(city1.y) - int(city.y)) ** 2))
+            self.distance += math.sqrt((int(city1.x) - int(city.x)) ** 2 + (int(city1.y) - int(city.y)) ** 2)
 
     def __str__(self):
         return "Distance of found path: " + '%s' % (self.distance)
