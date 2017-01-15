@@ -1,8 +1,7 @@
 import random
 import pygame
 from pygame.locals import KEYDOWN, QUIT, MOUSEBUTTONDOWN, K_RETURN, K_ESCAPE
-import operator
-import sys
+import argparse
 import math
 from copy import deepcopy
 import time
@@ -257,7 +256,15 @@ def eliteIndividu():
 
 '''Main point of the app '''
 if __name__ == '__main__':
-    ga_solve("data\pb050.txt", True, 20)
+    parser = argparse.ArgumentParser()
+    parser.add_argument('--nogui', action='store_false',help='no gui')
+    parser.add_argument('--maxtime', type=int,help='max time')
+    parser.add_argument('filename', nargs='?',default=None,help='file name')
+
+    args = parser.parse_args()
+    # print(args)
+    ga_solve(args.filename, args.nogui, args.maxtime)
+    # ga_solve("data\pb050.txt", True, 20)
 
 
 
