@@ -105,10 +105,8 @@ def initPoints(file):
 
 ''' ga_solve function, this function returns the best found travel path and the distance using the individu class'''
 def ga_solve(file=None, gui=True, maxTime=0):
-    # if gui is True:
-    #     if file is not None:
-    #         readFile(file)
-    #     initPoints(file)
+    cities.clear()
+    individues.clear()
     if file is not None:
         readFile(file)
     if gui is True:
@@ -145,12 +143,12 @@ def ga_solve(file=None, gui=True, maxTime=0):
     #     event = pygame.event.wait()
     #     if event.type == KEYDOWN: break
 
-    '''Console print of the travel path and the distance '''
+    # '''Console print of the travel path and the distance '''
     print(individues[0].distance)
     print(individues[0].travelPath)
 
     '''return of the best found individu in max time'''
-    return individues[0]
+    return [individues[0].distance,individues[0].travelPath]
 
 '''Personal selection: This function select a part of individu to mute them. We select the 2 first individues after the ordering of the list
     using the distance and then we select 40% of the rest population randomly'''
@@ -259,7 +257,7 @@ def eliteIndividu():
 
 '''Main point of the app '''
 if __name__ == '__main__':
-    ga_solve("data\pb050.txt", False, 20)
+    ga_solve("data\pb050.txt", True, 20)
 
 
 

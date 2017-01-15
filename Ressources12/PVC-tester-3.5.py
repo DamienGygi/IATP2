@@ -29,7 +29,7 @@ modules = (
 # <datafile> est le fichier contenant les données du problème et
 # <maxtime> le temps (en secondes) imparti pour la résolution
 tests = (
-    # ('data/pb005.txt',1),
+    ('data/pb005.txt',1),
     ('data/pb010.txt',5),
     # ('data/pb010.txt',10),
     # ('data/pb050.txt',30),
