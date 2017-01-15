@@ -20,7 +20,7 @@ Python 3.5 Ready, Romain Claret
 # Ces modules doivent être dans le PYTHONPATH; p.ex. dans le répertoire courant
 
 modules = (
-	"Claret_Visinand",
+	"GygiSchaffo",
 	# Éventuellement d'autres modules pour comparer plusieurs versions...
 )
 
@@ -31,11 +31,11 @@ modules = (
 tests = (
     ('data/pb005.txt',1),
     ('data/pb010.txt',5),
-    ('data/pb010.txt',10),
-    ('data/pb050.txt',30),
-    ('data/pb050.txt',60),
-    ('data/pb100.txt',20),
-    ('data/pb100.txt',90),
+    # ('data/pb010.txt',10),
+    # ('data/pb050.txt',30),
+    # ('data/pb050.txt',60),
+    # ('data/pb100.txt',20),
+    # ('data/pb100.txt',90),
 )
 
 # On tolère un dépassement de 5% du temps imparti:
