@@ -184,8 +184,7 @@ def mutation():
         listOrder = []
         listOrder.extend(indiv.travelPath)
         for l in range(0,4):
-            res = lambda i: (i[l], i[l+1])
-            res(listOrder)
+            listOrder[l],listOrder[l+1]=listOrder[l+1],listOrder[l]
             indiv.travelPath = listOrder
             indiv.totalDistance();
             if( indiv.distance < individues[index].distance):
@@ -238,17 +237,18 @@ def eliteIndividu():
             if distance==0:
                 distance=int(math.sqrt((int(individues[0].travelPath[i].x) - int(individues[0].travelPath[j].x)) ** 2 + (int(individues[0].travelPath[i].y) - int(individues[0].travelPath[j].y)) ** 2))
             else:
-               if(int(math.sqrt((int(individues[0].travelPath[i].x) - int(individues[0].travelPath[j].x)) ** 2 + (int(individues[0].travelPath[i].y) - int(individues[0].travelPath[j].y)) ** 2))<distance):
+               newDistance=int(math.sqrt((int(individues[0].travelPath[i].x) - int(individues[0].travelPath[j].x)) ** 2 + (int(individues[0].travelPath[i].y) - int(individues[0].travelPath[j].y)) ** 2))
+               if(newDistance<distance):
                     swapIndex1=i
                     swapIndex2=j
-                    distance = int(math.sqrt((int(individues[0].travelPath[i].x) - int(individues[0].travelPath[j].x)) ** 2 + (int(individues[0].travelPath[i].y) - int(individues[0].travelPath[j].y)) ** 2))
+                    distance = newDistance
 
         individues[0].travelPath[swapIndex1+1],individues[0].travelPath[swapIndex2]=individues[0].travelPath[swapIndex2],individues[0].travelPath[swapIndex1+1]
 
 
 '''Main point of the app '''
 if __name__ == '__main__':
-    ga_solve("pb050.txt", True, 10)
+    ga_solve("pb050.txt", True, 20)
 
 
 
