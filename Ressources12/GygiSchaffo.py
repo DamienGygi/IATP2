@@ -15,17 +15,12 @@ CITY_RADIUS = 7
 FONT_COLOR = [255, 255, 255]
 POPULATION_SIZE = 100
 
-''' Graphic part initialisation'''
-pygame.init()
-window = pygame.display.set_mode((SCREEN_X, SCREEN_Y))
-pygame.display.set_caption('GygSchaffo Perfekt Algorithm')
-screen = pygame.display.get_surface()
-font = pygame.font.Font(None, 20)
-
 ''' City list  and individu list initialisation'''
 cities = []
 individues = []
-
+window = None
+screen = None
+font = None
 
 ''' City class '''
 class City:
@@ -60,6 +55,17 @@ class Individu:
             
     def __str__(self):
         return "Distance of found path: " + '%s' % (self.distance)
+
+def init_gui():
+    ''' Graphic part initialisation'''
+    global window
+    global screen
+    global font
+    pygame.init()
+    window = pygame.display.set_mode((SCREEN_X, SCREEN_Y))
+    pygame.display.set_caption('GygSchaffo')
+    screen = pygame.display.get_surface()
+    font = pygame.font.Font(None, 20)
 
 ''' City import from file '''
 def readFile(file):
@@ -99,11 +105,15 @@ def initPoints(file):
 
 ''' ga_solve function, this function returns the best found travel path and the distance using the individu class'''
 def ga_solve(file=None, gui=True, maxTime=0):
+    # if gui is True:
+    #     if file is not None:
+    #         readFile(file)
+    #     initPoints(file)
+    if file is not None:
+        readFile(file)
     if gui is True:
-        if file is not None:
-            readFile(file)
+        init_gui()
         initPoints(file)
-
     '''Creation of a Population of individues, all are different (have a different travel path)'''
     citiesToVisit=cities[:]
     startCity= citiesToVisit.pop(0)
@@ -122,18 +132,18 @@ def ga_solve(file=None, gui=True, maxTime=0):
 
     '''Muting of the population to find a optimal solution'''
     while time.time()<startTime+maxTime:
-        screen.fill(0)
         selection()
         mutation()
         individues.sort(key=lambda x: x.distance, reverse=False)
         while(len(individues)>numberOfIndividues):
             individues.pop()
-        drawLine(individues[0].travelPath)
+        if gui is True:
+            drawLine(individues[0].travelPath)
 
-    '''Drawing of the best solution and wait on keypress'''
-    while True:
-        event = pygame.event.wait()
-        if event.type == KEYDOWN: break
+    # '''Drawing of the best solution and wait on keypress'''
+    # while True:
+    #     event = pygame.event.wait()
+    #     if event.type == KEYDOWN: break
 
     '''Console print of the travel path and the distance '''
     print(individues[0].distance)
@@ -213,6 +223,7 @@ def draw(cityList):
 
 '''This function draws each line of the travel path, it use the individu list'''
 def drawLine(cityList):
+    screen.fill(0)
     text = font.render("Searching a good traveling path: ", True, FONT_COLOR)
     textRect = text.get_rect()
     screen.blit(text, textRect)
@@ -248,7 +259,7 @@ def eliteIndividu():
 
 '''Main point of the app '''
 if __name__ == '__main__':
-    ga_solve("pb050.txt", True, 20)
+    ga_solve("data\pb050.txt", False, 20)
 
 
 
