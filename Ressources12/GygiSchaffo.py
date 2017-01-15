@@ -198,7 +198,7 @@ def mutation():
             indiv.totalDistance();
             if( indiv.distance < individues[index].distance):
                 individues.pop(index)
-            individuExist(indiv)
+                individuExist(indiv)
 
 '''This function verify if the new individu already exist'''
 def individuExist(indiv):
