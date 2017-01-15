@@ -126,9 +126,10 @@ def ga_solve(file=None, gui=True, maxTime=0):
 
     startTime = time.time()
     eliteIndividu()
-
+    bestPath = individues[0]
+    samePath =0;
     '''Muting of the population to find a optimal solution'''
-    while time.time()<startTime+maxTime:
+    while time.time()<startTime+maxTime and samePath<200:
         selection()
         mutation()
         individues.sort(key=lambda x: x.distance, reverse=False)
@@ -136,10 +137,15 @@ def ga_solve(file=None, gui=True, maxTime=0):
             individues.pop()
         if gui is True:
             drawLine(individues[0].travelPath)
+        if ( individues[0]==bestPath):
+            samePath+=1
+        else :
+            samePath=0
+            bestPath = individues[0]
 
-    # '''Console print of the travel path and the distance '''
-    # print(individues[0].distance)
-    # print(individues[0].travelPath)
+    '''Console print of the travel path and the distance '''
+    print(individues[0].distance)
+    print(individues[0].travelPath)
 
     '''return of the best found individu in max time'''
     return individues[0].distance, [city.name for city in individues[0].travelPath]
@@ -192,7 +198,7 @@ def mutation():
             indiv.totalDistance();
             if( indiv.distance < individues[index].distance):
                 individues.pop(index)
-                individuExist(indiv)
+            individuExist(indiv)
 
 '''This function verify if the new individu already exist'''
 def individuExist(indiv):
@@ -252,15 +258,14 @@ def eliteIndividu():
 
 '''Main point of the app '''
 if __name__ == '__main__':
-    # parser = argparse.ArgumentParser()
-    # parser.add_argument('--nogui', action='store_false',help='no gui')
-    # parser.add_argument('--maxtime', type=int,help='max time')
-    # parser.add_argument('filename', nargs='?',default=None,help='file name')
-    #
-    # args = parser.parse_args()
-    # # print(args)
-    # ga_solve(args.filename, args.nogui, args.maxtime)
-    ga_solve("data\pb010.txt", True, 20)
+    parser = argparse.ArgumentParser()
+    parser.add_argument('--nogui', action='store_false',help='no gui')
+    parser.add_argument('--maxtime', type=int,help='max time')
+    parser.add_argument('filename', nargs='?',default=None,help='file name')
+
+    args = parser.parse_args()
+    ga_solve(args.filename, args.nogui, args.maxtime)
+    # ga_solve("data\pb020.txt", True, 20)
 
 
 
