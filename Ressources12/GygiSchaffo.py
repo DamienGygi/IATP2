@@ -29,13 +29,13 @@ class City:
         self.y=y
 
     def __str__(self):
-        return '%s' % (self.name)
+        return self.name
 
     def __repr__(self):
         return self.name
 
     def __hash__(self):
-        return str(self).__hash__()
+        return hash((self._x, self.y, self._name))
 
 ''' Invididu class'''
 class Individu:
@@ -51,7 +51,7 @@ class Individu:
             else:
                 city1 = self.travelPath[i + 1]
             self.distance += int(math.sqrt((int(city1.x) - int(city.x)) ** 2 + (int(city1.y) - int(city.y)) ** 2))
-            
+
     def __str__(self):
         return "Distance of found path: " + '%s' % (self.distance)
 
@@ -137,17 +137,13 @@ def ga_solve(file=None, gui=True, maxTime=0):
         if gui is True:
             drawLine(individues[0].travelPath)
 
-    # '''Drawing of the best solution and wait on keypress'''
-    # while True:
-    #     event = pygame.event.wait()
-    #     if event.type == KEYDOWN: break
-
     # '''Console print of the travel path and the distance '''
-    print(individues[0].distance)
-    print(individues[0].travelPath)
+    # print(individues[0].distance)
+    # print(individues[0].travelPath)
 
     '''return of the best found individu in max time'''
-    return [individues[0].distance,individues[0].travelPath]
+    return individues[0].distance, [city.name for city in individues[0].travelPath]
+    # return [individues[0].distance,individues[0].travelPath]
 
 '''Personal selection: This function select a part of individu to mute them. We select the 2 first individues after the ordering of the list
     using the distance and then we select 40% of the rest population randomly'''
@@ -256,15 +252,15 @@ def eliteIndividu():
 
 '''Main point of the app '''
 if __name__ == '__main__':
-    parser = argparse.ArgumentParser()
-    parser.add_argument('--nogui', action='store_false',help='no gui')
-    parser.add_argument('--maxtime', type=int,help='max time')
-    parser.add_argument('filename', nargs='?',default=None,help='file name')
-
-    args = parser.parse_args()
-    # print(args)
-    ga_solve(args.filename, args.nogui, args.maxtime)
-    # ga_solve("data\pb050.txt", True, 20)
+    # parser = argparse.ArgumentParser()
+    # parser.add_argument('--nogui', action='store_false',help='no gui')
+    # parser.add_argument('--maxtime', type=int,help='max time')
+    # parser.add_argument('filename', nargs='?',default=None,help='file name')
+    #
+    # args = parser.parse_args()
+    # # print(args)
+    # ga_solve(args.filename, args.nogui, args.maxtime)
+    ga_solve("data\pb010.txt", True, 20)
 
 
 
