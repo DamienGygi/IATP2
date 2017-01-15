@@ -248,7 +248,4 @@ def eliteIndividu():
 
 '''Main point of the app '''
 if __name__ == '__main__':
-    ga_solve("pb050.txt", True, 20)
-
-
-
+    ga_solve("pb020.txt", True, 20)
